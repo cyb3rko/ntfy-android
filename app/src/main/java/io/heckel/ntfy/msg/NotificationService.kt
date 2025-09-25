@@ -9,10 +9,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.text.SpannedString
-import android.text.style.CharacterStyle
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import io.heckel.ntfy.R
@@ -35,11 +32,7 @@ class NotificationService(val context: Context) {
     }
 
     fun update(subscription: Subscription, notification: Notification) {
-        val active = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            notificationManager.activeNotifications.find { it.id == notification.notificationId } != null
-        } else {
-            true
-        }
+        val active = notificationManager.activeNotifications.find { it.id == notification.notificationId } != null
         if (active) {
             Log.d(TAG, "Updating notification $notification")
             displayInternal(subscription, notification, update = true)
@@ -61,24 +54,20 @@ class NotificationService(val context: Context) {
     }
 
     fun createDefaultNotificationChannels() {
-        maybeCreateNotificationGroup(DEFAULT_GROUP, context.getString(R.string.channel_notifications_group_default_name))
-        ALL_PRIORITIES.forEach { priority -> maybeCreateNotificationChannel(DEFAULT_GROUP, priority) }
+        createNotificationGroup(DEFAULT_GROUP, context.getString(R.string.channel_notifications_group_default_name))
+        ALL_PRIORITIES.forEach { priority -> createNotificationChannel(DEFAULT_GROUP, priority) }
     }
 
     fun createSubscriptionNotificationChannels(subscription: Subscription) {
         val groupId = subscriptionGroupId(subscription)
-        maybeCreateNotificationGroup(groupId, subscriptionGroupName(subscription))
-        ALL_PRIORITIES.forEach { priority -> maybeCreateNotificationChannel(groupId, priority) }
+        createNotificationGroup(groupId, subscriptionGroupName(subscription))
+        ALL_PRIORITIES.forEach { priority -> createNotificationChannel(groupId, priority) }
     }
 
     fun deleteSubscriptionNotificationChannels(subscription: Subscription) {
         val groupId = subscriptionGroupId(subscription)
-        ALL_PRIORITIES.forEach { priority -> maybeDeleteNotificationChannel(groupId, priority) }
-        maybeDeleteNotificationGroup(groupId)
-    }
-
-    fun channelsSupported(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        ALL_PRIORITIES.forEach { priority -> deleteNotificationChannel(groupId, priority) }
+        deleteNotificationGroup(groupId)
     }
 
     private fun subscriptionGroupId(subscription: Subscription): String {
@@ -112,8 +101,8 @@ class NotificationService(val context: Context) {
         maybeAddCancelAction(builder, notification)
         maybeAddUserActions(builder, notification)
 
-        maybeCreateNotificationGroup(groupId, subscriptionGroupName(subscription))
-        maybeCreateNotificationChannel(groupId, notification.priority)
+        createNotificationGroup(groupId, subscriptionGroupName(subscription))
+        createNotificationChannel(groupId, notification.priority)
         maybePlayInsistentSound(groupId, insistent)
 
         notificationManager.notify(notification.notificationId, builder.build())
@@ -374,62 +363,54 @@ class NotificationService(val context: Context) {
         }
     }
 
-    private fun maybeCreateNotificationChannel(group: String, priority: Int) {
-        if (channelsSupported()) {
-            // Note: To change a notification channel, you must delete the old one and create a new one!
+    private fun createNotificationChannel(group: String, priority: Int) {
+        // Note: To change a notification channel, you must delete the old one and create a new one!
 
-            val channelId = toChannelId(group, priority)
-            val pause = 300L
-            val channel = when (priority) {
-                PRIORITY_MIN -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_min_name), NotificationManager.IMPORTANCE_MIN)
-                PRIORITY_LOW -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_low_name), NotificationManager.IMPORTANCE_LOW)
-                PRIORITY_HIGH -> {
-                    val channel = NotificationChannel(channelId, context.getString(R.string.channel_notifications_high_name), NotificationManager.IMPORTANCE_HIGH)
-                    channel.enableVibration(true)
-                    channel.vibrationPattern = longArrayOf(
-                        pause, 100, pause, 100, pause, 100,
-                        pause, 2000
-                    )
-                    channel
-                }
-                PRIORITY_MAX -> {
-                    val channel = NotificationChannel(channelId, context.getString(R.string.channel_notifications_max_name), NotificationManager.IMPORTANCE_HIGH) // IMPORTANCE_MAX does not exist
-                    channel.enableLights(true)
-                    channel.enableVibration(true)
-                    channel.setBypassDnd(true)
-                    channel.vibrationPattern = longArrayOf(
-                        pause, 100, pause, 100, pause, 100,
-                        pause, 2000,
-                        pause, 100, pause, 100, pause, 100,
-                        pause, 2000,
-                        pause, 100, pause, 100, pause, 100,
-                        pause, 2000
-                    )
-                    channel
-                }
-                else -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_default_name), NotificationManager.IMPORTANCE_DEFAULT)
+        val channelId = toChannelId(group, priority)
+        val pause = 300L
+        val channel = when (priority) {
+            PRIORITY_MIN -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_min_name), NotificationManager.IMPORTANCE_MIN)
+            PRIORITY_LOW -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_low_name), NotificationManager.IMPORTANCE_LOW)
+            PRIORITY_HIGH -> {
+                val channel = NotificationChannel(channelId, context.getString(R.string.channel_notifications_high_name), NotificationManager.IMPORTANCE_HIGH)
+                channel.enableVibration(true)
+                channel.vibrationPattern = longArrayOf(
+                    pause, 100, pause, 100, pause, 100,
+                    pause, 2000
+                )
+                channel
             }
-            channel.group = group
-            notificationManager.createNotificationChannel(channel)
+            PRIORITY_MAX -> {
+                val channel = NotificationChannel(channelId, context.getString(R.string.channel_notifications_max_name), NotificationManager.IMPORTANCE_HIGH) // IMPORTANCE_MAX does not exist
+                channel.enableLights(true)
+                channel.enableVibration(true)
+                channel.setBypassDnd(true)
+                channel.vibrationPattern = longArrayOf(
+                    pause, 100, pause, 100, pause, 100,
+                    pause, 2000,
+                    pause, 100, pause, 100, pause, 100,
+                    pause, 2000,
+                    pause, 100, pause, 100, pause, 100,
+                    pause, 2000
+                )
+                channel
+            }
+            else -> NotificationChannel(channelId, context.getString(R.string.channel_notifications_default_name), NotificationManager.IMPORTANCE_DEFAULT)
         }
+        channel.group = group
+        notificationManager.createNotificationChannel(channel)
     }
 
-    private fun maybeDeleteNotificationChannel(group: String, priority: Int) {
-        if (channelsSupported()) {
-            notificationManager.deleteNotificationChannel(toChannelId(group, priority))
-        }
+    private fun deleteNotificationChannel(group: String, priority: Int) {
+        notificationManager.deleteNotificationChannel(toChannelId(group, priority))
     }
 
-    private fun maybeCreateNotificationGroup(id: String, name: String) {
-        if (channelsSupported()) {
-            notificationManager.createNotificationChannelGroup(NotificationChannelGroup(id, name))
-        }
+    private fun createNotificationGroup(id: String, name: String) {
+        notificationManager.createNotificationChannelGroup(NotificationChannelGroup(id, name))
     }
 
-    private fun maybeDeleteNotificationGroup(id: String) {
-        if (channelsSupported()) {
-            notificationManager.deleteNotificationChannelGroup(id)
-        }
+    private fun deleteNotificationGroup(id: String) {
+        notificationManager.deleteNotificationChannelGroup(id)
     }
 
     private fun toChannelId(groupId: String, priority: Int): String {
@@ -466,13 +447,9 @@ class NotificationService(val context: Context) {
     }
 
     private fun getInsistentSound(groupId: String): Uri {
-        return if (channelsSupported()) {
-            val channelId = toChannelId(groupId, PRIORITY_MAX)
-            val channel = notificationManager.getNotificationChannel(channelId)
-            channel.sound
-        } else {
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        }
+        val channelId = toChannelId(groupId, PRIORITY_MAX)
+        val channel = notificationManager.getNotificationChannel(channelId)
+        return channel.sound
     }
 
     /**

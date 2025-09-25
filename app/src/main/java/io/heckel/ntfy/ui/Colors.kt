@@ -2,7 +2,6 @@ package io.heckel.ntfy.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
 import io.heckel.ntfy.R
@@ -38,12 +37,7 @@ class Colors {
         }
 
         fun statusBarNormal(context: Context, dynamicColors: Boolean, darkMode: Boolean): Int {
-            val default = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                context.resources.getColor(R.color.action_bar, context.theme)
-            } else {
-                @Suppress("DEPRECATION")
-                context.resources.getColor(R.color.action_bar)
-            }
+            val default = context.resources.getColor(R.color.action_bar, context.theme)
             return if (dynamicColors) {
                 if (darkMode) {
                     MaterialColors.getColor(context, R.attr.colorSurface, default)
@@ -53,10 +47,6 @@ class Colors {
             } else {
                 default
             }
-        }
-
-        fun dangerText(context: Context): Int {
-            return MaterialColors.getColor(context, R.attr.colorError, Color.RED)
         }
 
         fun swipeToRefreshColor(context: Context): Int {

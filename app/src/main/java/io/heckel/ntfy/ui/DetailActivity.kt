@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.Menu
@@ -217,11 +216,7 @@ class DetailActivity : AppCompatActivity(), NotificationFragment.NotificationSet
         howToExample.linksClickable = true
 
         val howToText = getString(R.string.detail_how_to_example, topicUrl)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            howToExample.text = Html.fromHtml(howToText, Html.FROM_HTML_MODE_LEGACY)
-        } else {
-            howToExample.text = Html.fromHtml(howToText)
-        }
+        howToExample.text = Html.fromHtml(howToText, Html.FROM_HTML_MODE_LEGACY)
 
         // Swipe to refresh
         mainListContainer = findViewById(R.id.detail_notification_list_container)
@@ -616,7 +611,7 @@ class DetailActivity : AppCompatActivity(), NotificationFragment.NotificationSet
         dialog.setOnShowListener {
             dialog
                 .getButton(AlertDialog.BUTTON_POSITIVE)
-                .dangerButton(this)
+                .dangerButton()
         }
         dialog.show()
     }
@@ -653,7 +648,7 @@ class DetailActivity : AppCompatActivity(), NotificationFragment.NotificationSet
         dialog.setOnShowListener {
             dialog
                 .getButton(AlertDialog.BUTTON_POSITIVE)
-                .dangerButton(this)
+                .dangerButton()
         }
         dialog.show()
     }
@@ -736,7 +731,7 @@ class DetailActivity : AppCompatActivity(), NotificationFragment.NotificationSet
         dialog.setOnShowListener {
             dialog
                 .getButton(AlertDialog.BUTTON_POSITIVE)
-                .dangerButton(this)
+                .dangerButton()
         }
         dialog.show()
     }
