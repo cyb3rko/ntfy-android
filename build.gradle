@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '2.0.21'
+    ext.kotlin_version = '2.2.0'
     repositories {
         google()
         mavenCentral()
@@ -15,7 +15,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.google.devtools.ksp' version '2.0.21-1.0.27'
+    id 'com.google.devtools.ksp' version '2.2.0-2.0.2'
 }
 
 allprojects {
