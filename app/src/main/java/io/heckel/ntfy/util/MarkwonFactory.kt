@@ -46,7 +46,7 @@ internal object MarkwonFactory {
                 override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
                     builder
                         .setFactory(Heading::class.java) { _, props: RenderProps? ->
-                            arrayOf(
+                            arrayOf<MetricAffectingSpan>(
                                 RelativeSizeSpan(headingSizes[CoreProps.HEADING_LEVEL.require(props!!) - 1]),
                                 StyleSpan(Typeface.BOLD)
                             )
@@ -73,7 +73,7 @@ internal object MarkwonFactory {
                 override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
                     builder
                         .setFactory(Heading::class.java) { _, props: RenderProps? ->
-                            arrayOf(
+                            arrayOf<MetricAffectingSpan>(
                                 RelativeSizeSpan(headingSizes[CoreProps.HEADING_LEVEL.require(props!!) - 1]),
                                 StyleSpan(Typeface.BOLD)
                             )

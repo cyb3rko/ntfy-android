@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -658,7 +659,7 @@ class DetailActivity : AppCompatActivity(), NotificationFragment.NotificationSet
             handleActionModeClick(notification)
         } else if (notification.click != "") {
             try {
-                startActivity(Intent(ACTION_VIEW, Uri.parse(notification.click)))
+                startActivity(Intent(ACTION_VIEW, notification.click.toUri()))
             } catch (e: Exception) {
                 Log.w(TAG, "Cannot open click URL", e)
                 runOnUiThread {

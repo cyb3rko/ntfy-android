@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import io.heckel.ntfy.R
 import io.heckel.ntfy.db.*
 import io.heckel.ntfy.db.Notification
@@ -183,10 +184,10 @@ class NotificationService(val context: Context) {
             builder.setContentIntent(detailActivityIntent(subscription))
         } else {
             try {
-                val uri = Uri.parse(notification.click)
+                val uri = notification.click.toUri()
                 val viewIntent = PendingIntent.getActivity(context, Random().nextInt(), Intent(Intent.ACTION_VIEW, uri), PendingIntent.FLAG_IMMUTABLE)
                 builder.setContentIntent(viewIntent)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 builder.setContentIntent(detailActivityIntent(subscription))
             }
         }
@@ -206,7 +207,7 @@ class NotificationService(val context: Context) {
             return
         }
         if (notification.attachment?.contentUri != null) {
-            val contentUri = Uri.parse(notification.attachment.contentUri)
+            val contentUri = notification.attachment.contentUri.toUri()
             val intent = Intent(Intent.ACTION_VIEW, contentUri).apply {
                 setDataAndType(contentUri, notification.attachment.type ?: "application/octet-stream") // Required for Android <= P
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -274,7 +275,7 @@ class NotificationService(val context: Context) {
     private fun addViewUserActionWithoutClear(builder: NotificationCompat.Builder, action: Action) {
         try {
             val url = action.url ?: return
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
             val pendingIntent = PendingIntent.getActivity(context, Random().nextInt(), intent, PendingIntent.FLAG_IMMUTABLE)
@@ -472,7 +473,7 @@ class NotificationService(val context: Context) {
 
             // Immediately start the actual activity
             try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 startActivity(intent)

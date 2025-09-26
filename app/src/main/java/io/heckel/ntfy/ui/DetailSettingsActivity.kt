@@ -3,7 +3,6 @@ package io.heckel.ntfy.ui
 import android.content.ContentResolver
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
@@ -129,10 +129,8 @@ class DetailSettingsActivity : AppCompatActivity() {
                 loadInsistentMaxPriorityPref()
                 loadIconSetPref()
                 loadIconRemovePref()
-                if (notificationService.channelsSupported()) {
-                    loadDedicatedChannelsPrefs()
-                    loadOpenChannelsPrefs()
-                }
+                loadDedicatedChannelsPrefs()
+                loadOpenChannelsPrefs()
             } else {
                 val notificationsHeaderId = context?.getString(R.string.detail_settings_notifications_header_key) ?: return
                 val notificationsHeader: PreferenceCategory? = findPreference(notificationsHeaderId)
@@ -420,7 +418,7 @@ class DetailSettingsActivity : AppCompatActivity() {
             topicUrlPref?.summary = topicUrl
             topicUrlPref?.onPreferenceClickListener = OnPreferenceClickListener {
                 val context = context ?: return@OnPreferenceClickListener false
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("topic url", topicUrl)
                 clipboard.setPrimaryClip(clip)
                 Toast
@@ -492,7 +490,7 @@ class DetailSettingsActivity : AppCompatActivity() {
                 return
             }
             try {
-                resolver.delete(Uri.parse(uri), null, null)
+                resolver.delete(uri.toUri(), null, null)
             } catch (e: Exception) {
                 Log.w(TAG, "Unable to delete $uri", e)
             }

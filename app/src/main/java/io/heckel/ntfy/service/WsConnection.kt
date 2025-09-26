@@ -29,10 +29,10 @@ import kotlin.random.Random
  * https://github.com/gotify/android/blob/master/app/src/main/java/com/github/gotify/service/WebSocketConnection.java
  */
 class WsConnection(
-    private val connectionId: ConnectionId,
+    connectionId: ConnectionId,
     private val repository: Repository,
     private val user: User?,
-    private val sinceId: String?,
+    sinceId: String?,
     private val stateChangeListener: (Collection<Long>, ConnectionState) -> Unit,
     private val notificationListener: (Subscription, Notification) -> Unit,
     private val alarmManager: AlarmManager

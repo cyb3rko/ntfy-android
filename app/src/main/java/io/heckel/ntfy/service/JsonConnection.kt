@@ -9,12 +9,12 @@ import okhttp3.Call
 import java.util.concurrent.atomic.AtomicBoolean
 
 class JsonConnection(
-    private val connectionId: ConnectionId,
+    connectionId: ConnectionId,
     private val scope: CoroutineScope,
     private val repository: Repository,
     private val api: ApiService,
     private val user: User?,
-    private val sinceId: String?,
+    sinceId: String?,
     private val stateChangeListener: (Collection<Long>, ConnectionState) -> Unit,
     private val notificationListener: (Subscription, Notification) -> Unit,
     private val serviceActive: () -> Boolean

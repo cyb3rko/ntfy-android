@@ -674,12 +674,12 @@ class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPrefere
                         if (!response.isSuccessful) {
                             throw Exception("Unexpected response ${response.code}")
                         }
-                        val body = response.body?.string()?.trim()
-                        if (body.isNullOrEmpty()) throw Exception("Return body is empty")
+                        val body = response.body.string().trim()
+                        if (body.isEmpty()) throw Exception("Return body is empty")
                         Log.d(TAG, "Logs uploaded successfully: $body")
-                        val resp = gson.fromJson(body.toString(), NopasteResponse::class.java)
+                        val resp = gson.fromJson(body, NopasteResponse::class.java)
                         requireActivity().runOnUiThread {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                             val clip = ClipData.newPlainText("logs URL", resp.url)
                             clipboard.setPrimaryClip(clip)
                             if (scrub) {

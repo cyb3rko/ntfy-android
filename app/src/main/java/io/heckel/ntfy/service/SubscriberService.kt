@@ -223,7 +223,7 @@ class SubscriberService : Service() {
         }
 
         // Update foreground service notification popup
-        if (connections.size > 0) {
+        if (connections.isNotEmpty()) {
             val title = getString(R.string.channel_subscriber_notification_title)
             val text = if (BuildConfig.FIREBASE_AVAILABLE) {
                 when (instantSubscriptions.size) {
@@ -276,7 +276,7 @@ class SubscriberService : Service() {
     }
 
     private fun createNotificationChannel(): NotificationManager? {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val channelName = getString(R.string.channel_subscriber_service_name) // Show's up in UI
         val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW).let {
             it.setShowBadge(false) // Don't show long-press badge
@@ -361,14 +361,14 @@ class SubscriberService : Service() {
         private const val SHARED_PREFS_SERVICE_STATE = "ServiceState"
 
         fun saveServiceState(context: Context, state: ServiceState) {
-            val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_ID, Context.MODE_PRIVATE)
+            val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_ID, MODE_PRIVATE)
             sharedPrefs.edit()
                 .putString(SHARED_PREFS_SERVICE_STATE, state.name)
                 .apply()
         }
 
         fun readServiceState(context: Context): ServiceState {
-            val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_ID, Context.MODE_PRIVATE)
+            val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_ID, MODE_PRIVATE)
             val value = sharedPrefs.getString(SHARED_PREFS_SERVICE_STATE, ServiceState.STOPPED.name)
             return ServiceState.valueOf(value!!)
         }

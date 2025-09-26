@@ -8,7 +8,6 @@ import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -27,6 +26,7 @@ import androidx.appcompat.view.ActionMode
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -232,17 +232,17 @@ class MainActivity : AppCompatActivity(), AddFragment.SubscribeListener, Notific
         }
         fixNowButton.setOnClickListener {
             try {
-                Log.d(TAG, Uri.parse("package:$packageName").toString())
+                Log.d(TAG, "package:$packageName".toUri().toString())
                 startActivity(
                     Intent(
                         Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                        Uri.parse("package:$packageName")
+                        "package:$packageName".toUri()
                     )
                 )
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 try {
                     startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-                } catch (e2: ActivityNotFoundException) {
+                } catch (_: ActivityNotFoundException) {
                     startActivity(Intent(Settings.ACTION_SETTINGS))
                 }
             }
@@ -505,23 +505,23 @@ class MainActivity : AppCompatActivity(), AddFragment.SubscribeListener, Notific
                 true
             }
             R.id.main_menu_report_bug -> {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.main_menu_report_bug_url))))
+                startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.main_menu_report_bug_url).toUri()))
                 true
             }
             R.id.main_menu_rate -> {
                 try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
-                } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()))
+                } catch (_: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$packageName".toUri()))
                 }
                 true
             }
             R.id.main_menu_donate -> {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.main_menu_donate_url))))
+                startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.main_menu_donate_url).toUri()))
                 true
             }
             R.id.main_menu_docs -> {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.main_menu_docs_url))))
+                startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.main_menu_docs_url).toUri()))
                 true
             }
             else -> super.onOptionsItemSelected(item)

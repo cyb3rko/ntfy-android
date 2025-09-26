@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toUri
 import io.heckel.ntfy.R
 import io.heckel.ntfy.db.ACTION_PROGRESS_FAILED
 import io.heckel.ntfy.db.ACTION_PROGRESS_ONGOING
@@ -225,7 +226,7 @@ fun maybeAppendActionErrors(message: CharSequence, notification: Notification): 
 // Queries the filename of a content URI
 fun fileName(context: Context, contentUri: String?, fallbackName: String): String {
     return try {
-        val info = fileStat(context, Uri.parse(contentUri))
+        val info = fileStat(context, contentUri!!.toUri())
         info.filename
     } catch (_: Exception) {
         fallbackName
@@ -259,7 +260,7 @@ fun fileStat(context: Context, contentUri: Uri?): FileInfo {
 
 fun maybeFileStat(context: Context, contentUri: String?): FileInfo? {
     return try {
-        fileStat(context, Uri.parse(contentUri)) // Throws if the file does not exist
+        fileStat(context, contentUri!!.toUri()) // Throws if the file does not exist
     } catch (_: Exception) {
         null
     }
@@ -422,7 +423,7 @@ fun Uri.readBitmapFromUri(context: Context): Bitmap {
 }
 
 fun String.readBitmapFromUri(context: Context): Bitmap {
-    return Uri.parse(this).readBitmapFromUri(context)
+    return this.toUri().readBitmapFromUri(context)
 }
 
 fun String.readBitmapFromUriOrNull(context: Context): Bitmap? {

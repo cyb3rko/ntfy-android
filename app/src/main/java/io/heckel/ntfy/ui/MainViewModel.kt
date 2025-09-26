@@ -1,7 +1,7 @@
 package io.heckel.ntfy.ui
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -35,7 +35,7 @@ class SubscriptionsViewModel(private val repository: Repository) : ViewModel() {
         if (subscription.icon != null) {
             val resolver = context.applicationContext.contentResolver
             try {
-                resolver.delete(Uri.parse(subscription.icon), null, null)
+                resolver.delete(subscription.icon.toUri(), null, null)
             } catch (_: Exception) {
                 // Don't care
             }

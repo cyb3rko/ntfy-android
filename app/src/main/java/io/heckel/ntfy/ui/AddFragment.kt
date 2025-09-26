@@ -9,6 +9,8 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -192,9 +194,9 @@ class AddFragment : DialogFragment() {
     private fun positiveButtonClick() {
         val topic = subscribeTopicText.text.toString()
         val baseUrl = getBaseUrl()
-        if (subscribeView.visibility == View.VISIBLE) {
+        if (subscribeView.isVisible) {
             checkReadAndMaybeShowLogin(baseUrl, topic)
-        } else if (loginView.visibility == View.VISIBLE) {
+        } else if (loginView.isVisible) {
             loginAndMaybeDismiss(baseUrl, topic)
         }
     }
@@ -282,9 +284,9 @@ class AddFragment : DialogFragment() {
     }
 
     private fun negativeButtonClick() {
-        if (subscribeView.visibility == View.VISIBLE) {
+        if (subscribeView.isVisible) {
             dialog?.cancel()
-        } else if (loginView.visibility == View.VISIBLE) {
+        } else if (loginView.isVisible) {
             showSubscribeView()
         }
     }
@@ -343,7 +345,7 @@ class AddFragment : DialogFragment() {
         if (!this::positiveButton.isInitialized || !this::loginUsernameText.isInitialized || !this::loginPasswordText.isInitialized) {
             return // As per crash seen in Google Play
         }
-        if (loginUsernameText.visibility == View.GONE) {
+        if (loginUsernameText.isGone) {
             positiveButton.isEnabled = true
         } else {
             positiveButton.isEnabled = (loginUsernameText.text?.isNotEmpty() ?: false)

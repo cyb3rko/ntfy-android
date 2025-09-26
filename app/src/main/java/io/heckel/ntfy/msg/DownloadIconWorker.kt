@@ -70,7 +70,7 @@ class DownloadIconWorker(private val context: Context, params: WorkerParameters)
                 .build()
             client.newCall(request).execute().use { response ->
                 Log.d(TAG, "Headers received: $response, Content-Length: ${response.headers["Content-Length"]}")
-                if (!response.isSuccessful || response.body == null) {
+                if (!response.isSuccessful) {
                     throw Exception("Unexpected response: ${response.code}")
                 } else if (shouldAbortDownload(response)) {
                     Log.d(TAG, "Aborting download: Content-Length is larger than auto-download setting")
@@ -85,7 +85,7 @@ class DownloadIconWorker(private val context: Context, params: WorkerParameters)
                 val outFile = resolver.openOutputStream(uri) ?: throw Exception("Cannot open output stream")
                 val downloadLimit = getDownloadLimit()
                 outFile.use { fileOut ->
-                    val fileIn = response.body!!.byteStream()
+                    val fileIn = response.body.byteStream()
                     val buffer = ByteArray(BUFFER_SIZE)
                     var bytes = fileIn.read(buffer)
                     while (bytes >= 0) {
@@ -135,7 +135,7 @@ class DownloadIconWorker(private val context: Context, params: WorkerParameters)
 
     private fun getDownloadLimit(): Long {
         return if (repository.getAutoDownloadMaxSize() != Repository.AUTO_DOWNLOAD_NEVER && repository.getAutoDownloadMaxSize() != Repository.AUTO_DOWNLOAD_ALWAYS) {
-            Math.min(repository.getAutoDownloadMaxSize(), MAX_ICON_DOWNLOAD_BYTES)
+            repository.getAutoDownloadMaxSize().coerceAtMost(MAX_ICON_DOWNLOAD_BYTES)
         } else {
             DEFAULT_MAX_ICON_DOWNLOAD_BYTES
         }
