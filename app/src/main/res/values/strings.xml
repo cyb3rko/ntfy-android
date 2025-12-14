@@ -418,6 +418,6 @@
     <string name="custom_headers_delete">Delete</string>
     <string name="custom_headers_error_title">Invalid Header</string>
     <string name="custom_headers_invalid_name">Header name contains invalid characters</string>
-    <string name="custom_headers_name_hint">Header name (e.g., CF-Access-Client-Id)</string>
-    <string name="custom_headers_value_hint">Header value</string>
+    <string name="custom_headers_name_hint">Name (e.g. CF-Access-Client-Id)</string>
+    <string name="custom_headers_value_hint">Value</string>
 </resources>

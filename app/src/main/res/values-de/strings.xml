@@ -363,6 +363,6 @@
     <string name="custom_headers_delete">Löschen</string>
     <string name="custom_headers_error_title">Ungültiger Header</string>
     <string name="custom_headers_invalid_name">Ungültige Zeichen im Header-Namen</string>
-    <string name="custom_headers_name_hint">Header-Name (z. B. CF-Access-Client-Id)</string>
-    <string name="custom_headers_value_hint">Header-Wert</string>
+    <string name="custom_headers_name_hint">Name (z.B. CF-Access-Client-Id)</string>
+    <string name="custom_headers_value_hint">Wert</string>
 </resources>

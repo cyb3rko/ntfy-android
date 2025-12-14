@@ -2,10 +2,9 @@ package io.heckel.ntfy.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import io.heckel.ntfy.R
 import io.heckel.ntfy.db.Repository
@@ -60,12 +59,12 @@ class CustomHeadersFragment : PreferenceFragmentCompat() {
 
     private fun showAddHeaderDialog() {
         val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_custom_header, null)
+            .inflate(R.layout.preference_dialog_edittext_custom_header, null)
 
         val headerNameEdit = dialogView.findViewById<TextInputEditText>(R.id.header_name)
         val headerValueEdit = dialogView.findViewById<TextInputEditText>(R.id.header_value)
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.custom_headers_add_title)
             .setView(dialogView)
             .setPositiveButton(R.string.custom_headers_add) { _, _ ->
@@ -84,7 +83,7 @@ class CustomHeadersFragment : PreferenceFragmentCompat() {
 
     private fun showEditHeaderDialog(originalName: String, originalValue: String) {
         val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_custom_header, null)
+            .inflate(R.layout.preference_dialog_edittext_custom_header, null)
 
         val headerNameEdit = dialogView.findViewById<TextInputEditText>(R.id.header_name)
         val headerValueEdit = dialogView.findViewById<TextInputEditText>(R.id.header_value)
@@ -92,7 +91,7 @@ class CustomHeadersFragment : PreferenceFragmentCompat() {
         headerNameEdit.setText(originalName)
         headerValueEdit.setText(originalValue)
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.custom_headers_edit_title)
             .setView(dialogView)
             .setPositiveButton(R.string.custom_headers_save) { _, _ ->
@@ -113,7 +112,7 @@ class CustomHeadersFragment : PreferenceFragmentCompat() {
     }
 
     private fun showDeleteHeaderDialog(headerName: String) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.custom_headers_delete_title)
             .setMessage(getString(R.string.custom_headers_delete_message, headerName))
             .setPositiveButton(R.string.custom_headers_delete) { _, _ ->
@@ -124,7 +123,7 @@ class CustomHeadersFragment : PreferenceFragmentCompat() {
     }
 
     private fun showInvalidHeaderDialog() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.custom_headers_error_title)
             .setMessage(R.string.custom_headers_invalid_name)
             .setPositiveButton(android.R.string.ok, null)
